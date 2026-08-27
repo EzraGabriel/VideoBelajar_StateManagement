@@ -7,7 +7,7 @@ import Button from "../components/Button/Button";
 
 import "./AddCourse.css";
 import { useState } from "react";
-import { addCourse } from "../services/courseApi";
+import { useCourses } from "../hooks/useCourses.js";
 
 function AddCourse() {
   const [formData, setFormData] = useState({
@@ -24,6 +24,8 @@ function AddCourse() {
     mentorImage: "/src/assets/CoursesImage/3.png",
   });
 
+  const { addNewCourse } = useCourses();
+
   function handleChange(e) {
     const { name, value } = e.target;
 
@@ -36,14 +38,13 @@ function AddCourse() {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const newCourse = await addCourse(formData);
+      await addNewCourse(formData);
 
-      console.log("Course berhasil ditambahkan:", newCourse);
+      console.log("Course berhasil ditambahkan:");
+      navigate("/home");
     } catch (error) {
       console.error("Gagal menambahkan course:", error);
     }
-
-    navigate("/home");
   }
 
   const navigate = useNavigate();

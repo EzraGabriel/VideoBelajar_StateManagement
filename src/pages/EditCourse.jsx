@@ -1,7 +1,6 @@
 import Navbar from "../components/Navbar/Navbar.jsx";
 import Card from "../components/Card/Card.jsx";
 import { useNavigate } from "react-router-dom";
-import { deleteCourse } from "../services/courseApi";
 
 import "./EditCourse.css";
 

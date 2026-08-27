@@ -5,7 +5,8 @@ import Navbar from "../components/Navbar/Navbar.jsx";
 import Input from "../components/InputField/Input";
 import Card from "../components/Card/Card";
 import Button from "../components/Button/Button";
-import { getCourseById, updateCourse } from "../services/courseApi";
+import { getCourseById } from "../services/courseApi";
+import { useCourses } from "../hooks/useCourses";
 
 function EditDetailCourse() {
   const navigate = useNavigate();
@@ -19,6 +20,8 @@ function EditDetailCourse() {
     price: "",
   });
   const { id } = useParams();
+
+  const { editCourse } = useCourses();
 
   useEffect(() => {
     async function fetchCourse() {
@@ -43,7 +46,7 @@ function EditDetailCourse() {
     e.preventDefault();
 
     try {
-      await updateCourse(id, formData);
+      await editCourse(id, formData);
 
       navigate("/home");
     } catch (error) {

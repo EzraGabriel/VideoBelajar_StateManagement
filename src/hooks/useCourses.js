@@ -1,21 +1,47 @@
-import { useEffect, useState } from "react";
-import { getCourses, deleteCourse } from "../services/courseApi";
+import { useEffect } from "react";
+import {
+  getCourses,
+  addCourseData,
+  deleteCourse,
+  updateCourseData,
+} from "../services/courseApi";
+import { useDispatch, useSelector } from "react-redux";
+
+import {
+  setCourses,
+  setLoading,
+  deleteCourseFromState,
+  updateCourse,
+  addCourse,
+} from "../features/courses/courseSlice";
 
 export function useCourses() {
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const courses = useSelector((state) => state.courses.courses);
+  const loading = useSelector((state) => state.courses.loading);
   async function fetchCourses() {
     try {
       const data = await getCourses();
-      setCourses(data);
+      dispatch(setCourses(data));
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   }
   async function removeCourse(id) {
     await deleteCourse(id);
 
-    setCourses((prev) => prev.filter((course) => course.id !== id));
+    dispatch(deleteCourseFromState(id));
+  }
+  async function addNewCourse(course) {
+    const newCourse = await addCourseData(course);
+
+    dispatch(addCourse(newCourse));
+  }
+
+  async function editCourse(id, data) {
+    const updatedData = await updateCourseData(id, data);
+
+    dispatch(updateCourse(updatedData));
   }
 
   useEffect(() => {
@@ -26,5 +52,7 @@ export function useCourses() {
     courses,
     loading,
     removeCourse,
+    editCourse,
+    addNewCourse,
   };
 }
