@@ -126,3 +126,11 @@ select {
 
   outline: none;
 }
+
+.auth-form { display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
+.auth-message { width: calc(100% - 40px); padding: 10px 12px; border-radius: 6px; color: #a12622; background: #fff0ef; font: 14px/1.4 "DM Sans", sans-serif; }
+.auth-success { width: calc(100% - 40px); padding: 10px 12px; border-radius: 6px; color: #247a31; background: #effaf0; font: 14px/1.4 "DM Sans", sans-serif; }
+.auth-switch { color: #6c757d; font: 14px/1.4 "DM Sans", sans-serif; text-align: center; text-decoration: none; }
+.auth-switch strong { color: #3ecf4c; }
+.phone-wrapper select { width: 86px; flex: 0 0 86px; }
+.button:disabled { opacity: .65; cursor: wait; }

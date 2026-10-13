@@ -5,6 +5,7 @@ import Register from "./pages/SignIn.jsx";
 import AddCourse from "./pages/AddCourse.jsx";
 import EditCourse from "./pages/EditCourse.jsx";
 import EditDetailCourse from "./pages/EditDetailCourse.jsx";
+import RequireAuth from "./components/RequireAuth.jsx";
 
 import "./App.css";
 function App() {
@@ -13,10 +14,12 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/addcourse" element={<AddCourse />} />
-        <Route path="/editcourse" element={<EditCourse />} />
-        <Route path="/course/edit/:id" element={<EditDetailCourse />} />
+        <Route element={<RequireAuth />}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/addcourse" element={<AddCourse />} />
+          <Route path="/editcourse" element={<EditCourse />} />
+          <Route path="/course/edit/:id" element={<EditDetailCourse />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

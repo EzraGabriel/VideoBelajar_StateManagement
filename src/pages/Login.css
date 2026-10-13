@@ -56,3 +56,11 @@
   letter-spacing: 0.2px;
   text-align: center;
 }
+
+.auth-form { display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
+.auth-message, .auth-success { width: calc(100% - 40px); padding: 10px 12px; border-radius: 6px; font: 14px/1.4 "DM Sans", sans-serif; }
+.auth-message { color: #a12622; background: #fff0ef; }
+.auth-success { color: #247a31; background: #effaf0; }
+.auth-switch { color: #6c757d; font: 14px/1.4 "DM Sans", sans-serif; text-align: center; text-decoration: none; }
+.auth-switch strong { color: #3ecf4c; }
+.button:disabled { opacity: .65; cursor: wait; }

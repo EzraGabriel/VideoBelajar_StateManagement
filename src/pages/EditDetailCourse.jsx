@@ -84,6 +84,7 @@ function EditDetailCourse() {
               value={formData.category}
               onChange={handleChange}
             >
+              <option value="" disabled>Pilih kategori</option>
               <option value="Pemasaran">Pemasaran</option>
               <option value="Desain">Desain</option>
               <option value="Pengembangan Diri">Pengembangan Diri</option>

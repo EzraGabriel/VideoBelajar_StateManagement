@@ -7,12 +7,12 @@ import Footer from "../components/Footer/Footer.jsx";
 
 import "./Home.css";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCourses } from "../hooks/useCourses";
+import { useSelector } from "react-redux";
 //import { courses } from "../data/courses";
 
 function Home() {
-  const { courses, loading } = useCourses();
   const categories = [
     "Semua Kelas",
     "Pemasaran",
@@ -22,17 +22,29 @@ function Home() {
   ];
 
   const [activeTab, setActiveTab] = useState(categories[0]);
-
-  const filteredCourse = courses.filter((course) => {
-    if (activeTab === "Semua Kelas") {
-      return true;
-    }
-    return course.category === activeTab;
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("");
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortOptions = [
+    { label: "Harga Rendah", value: "price_asc" },
+    { label: "Harga Tinggi", value: "price_desc" },
+    { label: "A to Z", value: "title_asc" },
+    { label: "Z to A", value: "title_desc" },
+    { label: "Rating Tertinggi", value: "rating_desc" },
+    { label: "Rating Terendah", value: "rating_asc" },
+  ];
+  const { courses, loading } = useCourses({
+    category: activeTab === categories[0] ? "" : activeTab,
+    search,
+    sort,
   });
+  const hasLoaded = useSelector((state) => state.courses.hasLoaded);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setSearch(searchInput.trim()), 300);
+    return () => window.clearTimeout(timeout);
+  }, [searchInput]);
 
   return (
     <>
@@ -67,11 +79,59 @@ function Home() {
           activeTab={activeTab}
           onTabChange={setActiveTab}
         />
-        <div className="course-list">
-          {filteredCourse.map((course) => (
-            <CourseCard key={course.id} {...course} />
-          ))}
+        <div className="course-controls">
+          <div className="sort-control">
+            <button
+              className="sort-trigger"
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded={sortOpen}
+              onClick={() => setSortOpen((open) => !open)}
+            >
+              Urutkan <span className="sort-chevron" aria-hidden="true" />
+            </button>
+            {sortOpen && (
+              <div className="sort-menu" role="listbox" aria-label="Urutkan kelas">
+                {sortOptions.map((option) => (
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={sort === option.value}
+                    className={sort === option.value ? "sort-option selected" : "sort-option"}
+                    key={option.value}
+                    onClick={() => {
+                      setSort(option.value);
+                      setSortOpen(false);
+                    }}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <label className="course-search">
+            <span className="sr-only">Cari kelas</span>
+            <input
+              type="search"
+              value={searchInput}
+              onChange={(event) => setSearchInput(event.target.value)}
+              placeholder="Cari Kelas"
+            />
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="10.8" cy="10.8" r="6.3" />
+              <path d="m15.5 15.5 4.2 4.2" />
+            </svg>
+          </label>
         </div>
+        <div className="course-list">
+          {loading && !hasLoaded ? (
+            <p className="empty-courses">Memuat kelas...</p>
+          ) : (
+            courses.map((course) => <CourseCard key={course.id} {...course} />)
+          )}
+        </div>
+        {hasLoaded && !courses.length && <p className="empty-courses">Kelas tidak ditemukan.</p>}
       </section>
       <section className="newsletter">
         <div className="newsletter-container">

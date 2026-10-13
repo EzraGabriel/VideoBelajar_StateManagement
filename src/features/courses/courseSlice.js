@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   courses: [],
   loading: true,
+  hasLoaded: false,
 };
 
 const courseSlice = createSlice({
@@ -13,6 +14,7 @@ const courseSlice = createSlice({
   reducers: {
     setCourses(state, action) {
       state.courses = action.payload;
+      state.hasLoaded = true;
     },
 
     setLoading(state, action) {
@@ -21,7 +23,7 @@ const courseSlice = createSlice({
 
     deleteCourseFromState(state, action) {
       state.courses = state.courses.filter(
-        (course) => course.id !== action.payload,
+        (course) => String(course.id) !== String(action.payload),
       );
     },
 
@@ -30,7 +32,7 @@ const courseSlice = createSlice({
     },
     updateCourse(state, action) {
       const index = state.courses.findIndex(
-        (course) => course.id === action.payload.id,
+        (course) => String(course.id) === String(action.payload.id),
       );
 
       if (index !== -1) {

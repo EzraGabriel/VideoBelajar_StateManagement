@@ -15,18 +15,13 @@ import {
   addCourse,
 } from "../features/courses/courseSlice";
 
-export function useCourses() {
+export function useCourses(filters = {}) {
   const dispatch = useDispatch();
   const courses = useSelector((state) => state.courses.courses);
   const loading = useSelector((state) => state.courses.loading);
-  async function fetchCourses() {
-    try {
-      const data = await getCourses();
-      dispatch(setCourses(data));
-    } finally {
-      dispatch(setLoading(false));
-    }
-  }
+  const category = filters.category ?? "";
+  const search = filters.search ?? "";
+  const sort = filters.sort ?? "";
   async function removeCourse(id) {
     await deleteCourse(id);
 
@@ -45,8 +40,24 @@ export function useCourses() {
   }
 
   useEffect(() => {
-    fetchCourses();
-  }, []);
+    let active = true;
+    dispatch(setLoading(true));
+    getCourses({ category, search, sort })
+      .then((data) => {
+        if (active) dispatch(setCourses(data));
+      })
+      .catch((error) => {
+        console.error("Gagal memuat kelas:", error);
+        if (active) dispatch(setCourses([]));
+      })
+      .finally(() => {
+        if (active) dispatch(setLoading(false));
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [dispatch, category, search, sort]);
 
   return {
     courses,

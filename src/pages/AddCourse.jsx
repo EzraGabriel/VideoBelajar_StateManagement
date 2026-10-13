@@ -8,6 +8,7 @@ import Button from "../components/Button/Button";
 import "./AddCourse.css";
 import { useState } from "react";
 import { useCourses } from "../hooks/useCourses.js";
+import { clearSession } from "../utils/auth.js";
 
 function AddCourse() {
   const [formData, setFormData] = useState({
@@ -20,9 +21,8 @@ function AddCourse() {
     rating: 0,
     totalReview: 0,
     price: 0,
-    image: "/src/assets/CoursesImage/Course1.jpg",
-    mentorImage: "/src/assets/CoursesImage/3.png",
   });
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { addNewCourse } = useCourses();
 
@@ -37,13 +37,24 @@ function AddCourse() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setErrorMessage("");
     try {
       await addNewCourse(formData);
 
-      console.log("Course berhasil ditambahkan:");
       navigate("/home");
     } catch (error) {
       console.error("Gagal menambahkan course:", error);
+      if (error.response?.status === 401) {
+        clearSession();
+        navigate("/", {
+          replace: true,
+          state: { message: "Sesi login sudah tidak berlaku. Silakan masuk kembali." },
+        });
+        return;
+      }
+      setErrorMessage(
+        error.response?.data?.message || "Kelas gagal ditambahkan. Silakan coba lagi.",
+      );
     }
   }
 
@@ -57,6 +68,7 @@ function AddCourse() {
         subtitle="Yuk, tambah kursusmu di videobelajar."
       >
         <form onSubmit={handleSubmit} className="form">
+          {errorMessage && <p className="auth-message" role="alert">{errorMessage}</p>}
           <Input
             name="title"
             type="text"
@@ -82,6 +94,7 @@ function AddCourse() {
               value={formData.category}
               onChange={handleChange}
             >
+              <option value="" disabled>Pilih kategori</option>
               <option value="Pemasaran">Pemasaran</option>
               <option value="Desain">Desain</option>
               <option value="Pengembangan Diri">Pengembangan Diri</option>
